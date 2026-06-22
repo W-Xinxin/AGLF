@@ -1,0 +1,36 @@
+function [X] = findExternalData(data, nvList, index) % modified from findindex.m 
+
+%FINDINDEX Summary of this function goes here
+% 目的： 对于当前视图中缺失的样本， 找到其他视图对应位置的数据
+% data :    original data with 0 padding for missing view
+% nvListL:  external views
+% index:    the index for missing view
+
+nv = length(nvList);
+if nv == 1;
+   X1 = data{nvList};
+   X = X1(:,index);
+   return; 
+end
+
+tempS 
+[numofview,~] = size(data);
+[~,numofsample] = size(data{1});
+
+X1 = cell(numofview,1);
+X2 = cell(numofview,1);
+
+ind = zeros(numofsample,numofview);
+for i=1:numofview
+    [d,~]=size(data{i});
+    ind(index{i}, i) = 1;
+    origin = data{i};
+    origin(isnan(origin)) = 0;       % replace NULL with 0;
+    X1{i} = NormalizeData(origin);  
+    
+    MissIndex{i} = find(1-ind(:,i));  % find missing index
+    origin(:,MissIndex{i}) = [];      % omit the missing view
+    X2{i} = NormalizeData(origin);  
+end
+
+end
